@@ -1,4 +1,3 @@
-Here’s your properly formatted **README.md**:  
 
 ```markdown
 # Vite + TypeScript + MUI + Redux Toolkit
