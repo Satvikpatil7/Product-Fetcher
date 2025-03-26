@@ -28,12 +28,12 @@ const initialState: SearchState = {
 
 export const fetchSearchResults = createAsyncThunk<Product[], void>(
     'search/fetchSearchResults',
-    async (_, { rejectWithValue }) => {
+    async (_, { errors }) => {
         try {
             const response = await axios.get<Product[]>('https://fakestoreapi.com/products');
             return response.data;
         } catch (error: any) {
-            return rejectWithValue(error.response?.data || 'An error occurred');
+            return errors(error.response?.data || 'An error occurred');
         }
     }
 );
