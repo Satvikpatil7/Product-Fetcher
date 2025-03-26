@@ -30,12 +30,12 @@ const initialState: SearchState = {
 // It automatically generates action types for pending, fulfilled, and rejected states.
 export const fetchSearchResults = createAsyncThunk<Product[], void>(
     'search/fetchSearchResults',
-    async (_, { rejectWithValue }) => {
+    async (_, { errorvalue }) => {
         try {
             const response = await axios.get<Product[]>('https://fakestoreapi.com/products');
             return response.data; // If successful, returns the fetched data.
         } catch (error: any) {
-            return rejectWithValue(error.response?.data || 'An error occurred'); // Handles errors properly.
+            return errorvalue(error.response?.data || 'An error occurred'); // Handles errors properly.
         }
     }
 );
