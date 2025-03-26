@@ -26,14 +26,16 @@ const initialState: SearchState = {
     error: null,
 };
 
+// `createAsyncThunk` is used to handle asynchronous API requests in Redux Toolkit.
+// It automatically generates action types for pending, fulfilled, and rejected states.
 export const fetchSearchResults = createAsyncThunk<Product[], void>(
     'search/fetchSearchResults',
-    async (_, { errors }) => {
+    async (_, { rejectWithValue }) => {
         try {
             const response = await axios.get<Product[]>('https://fakestoreapi.com/products');
-            return response.data;
+            return response.data; // If successful, returns the fetched data.
         } catch (error: any) {
-            return errors(error.response?.data || 'An error occurred');
+            return rejectWithValue(error.response?.data || 'An error occurred'); // Handles errors properly.
         }
     }
 );
@@ -61,18 +63,20 @@ const searchSlice = createSlice({
                 (product) => product.category.toLowerCase().includes(action.payload.toLowerCase())
             );
         }
-        
     },
     extraReducers: (builder) => {
         builder
+            // When the async request starts, set `loading` to true.
             .addCase(fetchSearchResults.pending, (state) => {
                 state.loading = true;
                 state.error = null;
             })
+            // When the request is successful, store the fetched data in `searchResults`.
             .addCase(fetchSearchResults.fulfilled, (state, action: PayloadAction<Product[]>) => {
                 state.loading = false;
                 state.searchResults = action.payload;
             })
+            // If the request fails, set the `error` state.
             .addCase(fetchSearchResults.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string;
@@ -80,6 +84,6 @@ const searchSlice = createSlice({
     },
 });
 
-export const { sortByName, sortByRangePrice, searchTitle ,GetBycategory } = searchSlice.actions;
+export const { sortByName, sortByRangePrice, searchTitle, GetBycategory } = searchSlice.actions;
 
 export default searchSlice.reducer;
